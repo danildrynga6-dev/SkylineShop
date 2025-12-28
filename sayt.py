@@ -1,27 +1,23 @@
 import os
 from flask import Flask, render_template
-from dotenv import load_dotenv
 from supabase import create_client
-# Подгружаем секретные ключи из .env
-load_dotenv()
+
 app = Flask(__name__, template_folder='templates')
-# Инициализируем связь с базой Supabase
-url = os.environ.get("SUPABASE_URL")
-key = os.environ.get("SUPABASE_KEY")
+
+# --- ВОТ СЮДА ВСТАВЛЯЕМ ЭТОТ БЛОК ---
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_KEY")
 supabase = create_client(url, key)
+# ------------------------------------
+
 @app.route('/')
-def home():
-    try:
-        # Получаем товары из таблицы 'products'
-        response = supabase.table("products").select("*").execute()
-        items = response.data
-    except Exception as e:
-        print(f"Ошибка получения данных: {e}")
-        items = []
-    
-    return render_template('index.html', clothes=items)
+def index():
+    # Запрос данных из таблицы 'shoes' (убедись, что таблица так называется)
+    response = supabase.table('shoes').select("*").execute()
+    shoes_list = response.data
+    return render_template('index.html', shoes=shoes_list)
 
-if __name__ == "__main__":
-
+if __name__ == '__main__':
     app.run(debug=True)
+
 
